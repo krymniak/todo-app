@@ -1,13 +1,22 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
+import { TodosService } from "../../services/todos.service";
 
 @Component({
 	selector: 'app-todos-header',
 	templateUrl: './header.component.html'
 })
 
-export class HeaderComponent{
+export class HeaderComponent implements OnInit{
 
 	text: string = ''
+
+	constructor(private todoService: TodosService) {}
+
+	ngOnInit(): void {
+		this.todoService.todos$.subscribe(todos => {
+			console.log('todos', todos)
+		})
+	}
 
 	changeText(event: Event): void {
 		const target = event.target as HTMLInputElement
@@ -15,6 +24,7 @@ export class HeaderComponent{
 	}
 
 	addTodo(): void {
-		
+		this.todoService.addTodo(this.text)
+		this.text = ''
 	}
 }
