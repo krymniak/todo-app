@@ -11,10 +11,14 @@ import { TodoItem } from "../../types/todo.interface";
 
 export class MainComponent implements OnInit{
 	visibleTodos$!: Observable<TodoItem[]>
+	noTodoClass$!: Observable<boolean>
 
 	constructor(private todosService: TodosService) {}
 
 	ngOnInit(): void {
+		this.noTodoClass$ = this.todosService.todos$.pipe(
+			map((todos) => todos.length === 0)
+		)
 		this.visibleTodos$ = combineLatest(
 			this.todosService.todos$,
 			this.todosService.filter$
