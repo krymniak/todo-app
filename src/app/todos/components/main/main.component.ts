@@ -12,10 +12,13 @@ import { TodoItem } from "../../types/todo.interface";
 export class MainComponent implements OnInit{
 	visibleTodos$!: Observable<TodoItem[]>
 	noTodoClass$!: Observable<boolean>
-
+	isAllTodosSelected$!: Observable<boolean>
 	constructor(private todosService: TodosService) {}
 
 	ngOnInit(): void {
+		this.isAllTodosSelected$ = this.todosService.todos$.pipe(
+			map((todos) => todos.every((todo) => todo.isComplited))
+		)
 		this.noTodoClass$ = this.todosService.todos$.pipe(
 			map((todos) => todos.length === 0)
 		)
@@ -30,5 +33,9 @@ export class MainComponent implements OnInit{
 			}
 			return todos
 		}))
+	}
+	toggleAllTodos(event: Event): void {
+		const target = event.target as HTMLInputElement
+		this.todosService.toggleAll(target.checked)
 	}
 }
