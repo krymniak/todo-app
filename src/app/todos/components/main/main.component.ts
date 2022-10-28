@@ -13,11 +13,13 @@ export class MainComponent implements OnInit{
 	visibleTodos$!: Observable<TodoItem[]>
 	noTodoClass$!: Observable<boolean>
 	isAllTodosSelected$!: Observable<boolean>
+	editingId: string | null = null
+
 	constructor(private todosService: TodosService) {}
 
 	ngOnInit(): void {
 		this.isAllTodosSelected$ = this.todosService.todos$.pipe(
-			map((todos) => todos.every((todo) => todo.isComplited))
+			map((todos) => todos.every((todo) => todo.isCompleted))
 		)
 		this.noTodoClass$ = this.todosService.todos$.pipe(
 			map((todos) => todos.length === 0)
@@ -27,9 +29,9 @@ export class MainComponent implements OnInit{
 			this.todosService.filter$
 		).pipe(map(([todos, filter]: [TodoItem[], FilterEnum]) => {
 			if(filter === FilterEnum.active) {
-				return todos.filter( todo => !todo.isComplited)
+				return todos.filter( todo => !todo.isCompleted)
 			} else if (filter === FilterEnum.completed) {
-				return todos.filter( todo => todo.isComplited)
+				return todos.filter( todo => todo.isCompleted)
 			}
 			return todos
 		}))
@@ -37,5 +39,9 @@ export class MainComponent implements OnInit{
 	toggleAllTodos(event: Event): void {
 		const target = event.target as HTMLInputElement
 		this.todosService.toggleAll(target.checked)
+	}
+
+	setEditingId(editingId: string | null): void {
+		this.editingId = editingId
 	}
 }
